@@ -1,0 +1,136 @@
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="dataController"
+     ng-init="isNoDataShow=false;isShowModifyBtn = false;isdownItem =false">
+    <div class="lter wrapper-s b-b b-r clearfix">
+        <div class="pull-left m-t-sm m-b-sm">
+            <span class="padder font-bold">结果</span>
+        </div>
+        <div class="pull-left m-t-sm m-b-sm">
+            <span class="padder b-l b-l-2x b-l-info"> </span>
+
+            <div ng-click="back();" style="display: inline-block;cursor: pointer" title="返回">
+                <i class="icon-action-undo"></i>
+            </div>
+        </div>
+        <div class="f_Right" style="width: 1250px">
+            <div class="col-sm-3">
+                <label class="m-l-md w-xms m-t-sm m-b-xs font-bold f_Left">cache:</label>
+                <select name="account" class="form-control m-t-xs f_Left"
+                        ng-model="cache_name" style="width: 200px"
+                        ng-click="checkedItem(cache_name);isNoDataShow = false">
+                    <option ng-repeat="cache in cacheList">{{cache.cache_name}}</option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <label class="m-l-md w-xms m-t-sm m-b-xs font-bold f_Left">key:</label>
+                <input type="text" class="form-control m-t-xs f_Left"
+                       style="width: 180px" ng-model="pattern_key">
+            </div>
+            <div class="col-sm-3" ng-hide="true">
+                <label class="m-l-md w-xms m-t-sm m-b-xs font-bold f_Left">type:</label>
+                <input type="text" class="form-control m-t-xs f_Left"
+                       style="width: 180px" ng-model="type">
+            </div>
+            <div ng-show="type=='zset'" class="col-sm-1" style="width: 120px">
+                <select class="form-control m-t-xs f_Left"
+                        ng-init="isdownItem =sortOrder[0].boolean " ng-model="isdownItem">
+                    <option ng-repeat="x in sortOrder" value="{{x.boolean}}">{{x.order}}</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <button type="submit" class="btn btn-primary btn-sm m-l-xs m-t-xs font-bold f_Left"
+                        ng-click="queryItem(pattern_key,type,isdownItem)">
+                    查 询
+                </button>
+            </div>
+        </div>
+    </div>
+    <div ng-show="isNoDataShow">
+        <h3 style="margin-left: 50px">未查到结果</h3>
+    </div>
+    <div style="width: 1200px;margin-top: 40px" ng-repeat="data in dataList" ng-hide="isNoDataShow">
+        <div class="col-lg-4 col-md-6" ng-if="isShowBtn">
+            <div class="form-group">
+                <label class="col-sm-4 control-label text-right" style="bottom: -10px">
+                    <p ng-show="isShowZset">({{$index+1}}).value: </p>
+                    <span ng-hide="isShowZset">{{data.key}}:</span>
+                </label>
+
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" ng-model="data.value" disabled='disabled'>
+                    <span ng-show="isShowZset"> score:{{data.key}}</span>
+                </div>
+            </div>
+            <div class="line line-dashed b-b line-lg pull-in"></div>
+        </div>
+        <div class="col-lg-4 col-md-6" ng-hide="isShowBtn">
+            <div class="form-group">
+                <label class="col-sm-4 control-label text-right" style="bottom: -10px">
+                    <p ng-show="isShowZset"> ({{$index+1}}).value: </p>
+                    <span ng-hide="isShowZset">{{data.key}}:</span>
+                </label>
+
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" ng-model="data.value">
+                    <span ng-show="isShowZset"> score:{{data.key}}</span>
+                </div>
+            </div>
+            <div class="line line-dashed b-b line-lg pull-in"></div>
+        </div>
+    </div>
+    <div ng-if="isShowValue"><h1 style="margin-left: 50px">{{data}}</h1></div>
+    <div ng-hide="isShowValue || ShowValue">
+        <h1 style="margin-left: 50px">
+            <input type="text" class="form-control" ng-model="data" style="width: 60px"/>
+        </h1>
+    </div>
+    <div class="col-sm-12 col-sm-offset-4" ng-show="(isShowBtn||isShowValue) &&(!isNoDataShow)&&isShowModifyBtn">
+        <button type="submit"
+                class="btn btn-info"
+                ng-click="isShowValueItem(type);isShowBtn=false;isShowValue=false">
+            修改
+        </button>
+        <button type="submit" class="btn btn-danger"
+                data-toggle="modal"
+                data-target="#deleteModal"
+                ng-click="showDateItem(pattern_key,type)">
+            删 除
+        </button>
+    </div>
+    <div class="col-sm-12 col-sm-offset-4" ng-hide="isShowBtn||isShowValue">
+        <button type="submit"
+                class="btn btn-info"
+                ng-click="editDate(pattern_key,data,type)||editDate(pattern_key,dataList,type);isShowBtn=true;isShowValue=true">
+            确定
+        </button>
+        <button type="submit"
+                class="btn btn-default"
+                ng-click="isShowBtn=true;isShowValue=true">
+            取消
+        </button>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h5 class="modal-title">删除</h5>
+                </div>
+                <div class="modal-body clearfix">
+                    <div class="col-lg-1">
+                        <span class="text-2x fa fa-question-circle text-danger-dker"></span>
+                    </div>
+                    <div class="col-lg-11">
+                        <p class="font-bold">确定要删除:{{type}}?</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" data-dismiss="modal"
+                            ng-click="deleteItem(pattern_key,type)">确 定
+                    </button>
+                    <button class="btn btn-default" data-dismiss="modal">取 消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

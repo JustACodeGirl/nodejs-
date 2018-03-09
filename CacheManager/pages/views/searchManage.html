@@ -1,0 +1,208 @@
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-controller="searchController as vm">
+    <div class="lter wrapper-s b-b b-r clearfix">
+        <div class="pull-left m-t-sm m-b-sm">
+            <span class="padder font-bold">Search Server</span>
+        </div>
+        <div class="pull-left m-t-sm m-b-sm">
+            <span class="padder b-l b-l-2x b-l-info" ></span>
+            <div ng-click="back();" style="display: inline-block;cursor: pointer" title="返回">
+                <i class="icon-action-undo"></i>
+            </div>
+        </div>
+        <div class="pull-right m-r-lxl">
+            <button type="submit" class="btn btn-primary btn-sm m-l-xs m-t-xs font-bold f_Left"
+                    data-toggle="modal"
+                    data-target="#addModal">添加server
+            </button>
+        </div>
+    </div>
+    <div style="width: 1200px;margin-top: 20px">
+        <table class="table table-bordered table-condensed table-striped" style="margin: 20px 100px">
+            <thead class="bg-light">
+            <tr>
+                <th class="col-sm-1">名称</th>
+                <th class="col-sm-1">描述</th>
+                <th class="col-sm-1">获取sorl index列表API</th>
+                <th class="col-sm-1">solr admin系统url</th>
+                <th class="col-sm-2">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="info" ng-repeat="list in searchList">
+                <td class="col-sm-1"><a ng-click="stateItem(list)">{{list.name}}</a></td>
+                <td class="col-sm-1">{{list.description}}</td>
+                <td class="col-sm-1">{{list.solrIndexListApi}}</td>
+                <td class="col-sm-1">
+                    <a ng-href="{{list.solrAdmin}}" target="_blank"> {{list.solrAdmin}}</a></td>
+                <td class="col-sm-2">
+                    <a class="text-decorline m-r" style="color: #7266ba"
+                       data-toggle="modal"
+                       data-target="#editModal"
+                       ng-click="showItem(list)">编辑</a>
+                    <a class="text-decorline m-r" style="color: #ec2121"
+                       data-toggle="modal"
+                       data-target="#deleteModal"
+                       ng-click="showDeleteItem(list,$index)">删除</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal fade" id="addModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h5 class="modal-title">添加</h5>
+                </div>
+                <form name="addSearchForm" class="form-validation">
+                    <div class="modal-body clearfix">
+                        <div class="row">
+                            <label class="col-sm-3 control-label text-right">名称:</label>
+
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control"
+                                       ng-model="addsearch.name"
+                                       ng-maxlength="100"
+                                       required>
+                            </div>
+                            <div class="line"></div>
+                            <label class="col-sm-3 control-label text-right">描述:</label>
+
+                            <div class="col-sm-7">
+                                <textarea cols="35" rows="3" class="form-control" style="resize:none;"
+                                          ng-model="addsearch.description"
+                                          ng-maxlength="200" required></textarea>
+                            </div>
+                            <div class="line"></div>
+
+                            <label class="col-sm-3 control-label text-right">获取sorl index列表API:</label>
+
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control"
+                                       ng-model="addsearch.solrIndexListApi"
+                                       ng-maxlength="300"
+                                       required>
+                            </div>
+                            <div class="line"></div>
+                            <label class="col-sm-3 control-label text-right">solr admin系统url:</label>
+
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control"
+                                       ng-model="addsearch.solrAdmin"
+                                       ng-maxlength="300"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" ng-disabled="addSearchForm.$invalid"
+                                class="btn btn-primary" data-dismiss="modal" ng-click="addSearchInfo(addsearch)">
+                            确 定
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            取 消
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h5 class="modal-title">编辑</h5>
+                </div>
+                <form class="form-validation" name = "editSearchForm">
+                    <div class="modal-body clearfix">
+                        <div class="row">
+                            <div class="row">
+                                <label class="col-sm-3 control-label text-right">名称:</label>
+
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control"
+                                           ng-model="editSearch.name"
+                                           ng-maxlength="100"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="line"></div>
+
+                                <label class="col-sm-3 control-label text-right">描述:</label>
+
+                                <div class="col-sm-7">
+                                     <textarea cols="35" rows="3" class="form-control" style="resize:none;"
+                                               ng-model="editSearch.description"
+                                               ng-maxlength="200" required></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="line"></div>
+
+                                <label class="col-sm-3 control-label text-right">获取sorl index列表API:</label>
+
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control"
+                                           ng-model="editSearch.solrIndexListApi"
+                                           ng-maxlength="300"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="line"></div>
+
+                                <label class="col-sm-3 control-label text-right">solr admin系统url:</label>
+
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control"
+                                           ng-model="editSearch.solrAdmin"
+                                           ng-maxlength="300"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" ng-disabled="editSearchForm.$invalid"
+                                data-dismiss="modal" ng-click="editSearchInfo(editSearch)">
+                            确 定
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            取 消
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h5 class="modal-title">删除</h5>
+                </div>
+                <div class="modal-body clearfix">
+                    <div class="col-lg-1">
+                        <span class="text-2x fa fa-question-circle text-danger-dker"></span>
+                    </div>
+                    <div class="col-lg-11">
+                        <p class="font-bold">确定要删除： {{deleteSearchItem.name}}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" data-dismiss="modal"
+                            ng-click="deleteSearch(deleteSearchItem,$index)">确 定
+                    </button>
+                    <button class="btn btn-default" data-dismiss="modal">取 消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
